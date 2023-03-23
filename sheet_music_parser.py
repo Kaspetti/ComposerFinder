@@ -2,12 +2,12 @@ import numpy as np
 import xml.etree.ElementTree as ET
 
 duration_types = {
-    "32nd": "01",
-    "16th": "02",
-    "eighth": "04",
-    "quarter": "08",
-    "half": "16",
-    "whole": "32"   
+    "32nd": "32",
+    "16th": "16",
+    "eighth": "08",
+    "quarter": "04",
+    "half": "02",
+    "whole": "01"   
 }
 
 '''spanner_types = {
@@ -30,7 +30,7 @@ def parseXML(file: str):
         for measure in measures:
             parsed_measure = []
             voice = measure.find("./voice")
-            chords = voice.findall("./Chord")
+            chords = measure.findall("./Chord")
             
             for chord in chords:
                 duration_type = chord.find("./durationType").text
@@ -55,7 +55,7 @@ def parseXML(file: str):
             else:
                 parsed_staff_2.append(np.pad(parsed_measure, (0, 32 - len(parsed_measure)), 'constant', constant_values=(0, 0)))
     
-    return np.append(parsed_staff_1, parsed_staff_2, axis=0)
+    return np.stack((parsed_staff_1, parsed_staff_2), axis=1)
 
 if __name__ == "__main__":
     print(parseXML("Nocturne.mscx")[1])
