@@ -2,6 +2,7 @@ import numpy as np
 import xml.etree.ElementTree as ET
 
 duration_types = {
+    "64th": "64",
     "32nd": "32",
     "16th": "16",
     "eighth": "08",
@@ -51,11 +52,12 @@ def parseXML(file: str):
                     parsed_measure.append(note)
         
             if staff.attrib["id"] == "1":
-                parsed_staff_1.append(np.pad(parsed_measure, (0, 32 - len(parsed_measure)), 'constant', constant_values=(0, 0)))
+                parsed_staff_1.append(np.pad(parsed_measure, (0, 64 - len(parsed_measure)), 'constant', constant_values=(0, 0)))
             else:
-                parsed_staff_2.append(np.pad(parsed_measure, (0, 32 - len(parsed_measure)), 'constant', constant_values=(0, 0)))
+                parsed_staff_2.append(np.pad(parsed_measure, (0, 64 - len(parsed_measure)), 'constant', constant_values=(0, 0)))
     
-    return np.stack((parsed_staff_1, parsed_staff_2), axis=1)
+    parsed_sheet = np.stack((parsed_staff_1, parsed_staff_2), axis=1)
+    return np.pad(parsed_sheet, (0, 150-len(parsed_sheet)), 'constant', constant_values=(0,0))
 
 if __name__ == "__main__":
-    print(parseXML("Nocturne.mscx")[1])
+    print(parseXML("data/chopin_nocturne_op9_no2.mscx").shape)
